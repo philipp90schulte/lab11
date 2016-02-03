@@ -68,7 +68,7 @@ void step(double* const f1, double* const f0,
           const double dt, const double dx,
           const double D, const int N)
 {
-
+// Note f1 = u1, f0 = uo
   double* d=new double[N];
   double* u=new double[N];
   double* l=new double[N];
@@ -77,6 +77,28 @@ void step(double* const f1, double* const f0,
   for(int i=0;i<N;i++) u[i] = - D*dt/(dx*dx);
   for(int i=0;i<N;i++) l[i] = - D*dt/(dx*dx);
 
+  // calculte the forward substitution matrix
+  
+  
+  double dtemp;
+  for (int i = 0; i <N -1 ; i++) {
+    dtemp = l[i+1] / d[i];
+  
+  l[i+1] -= d[i] * dtemp;
+  d[i+1] -= u[i] * dtemp;
+
+  
+  f0[i+1] -= f0[i] * dtemp;
+  }
+  
+  
+  
+  
+  f1[N-1] = f0[N-1] / d[N-1]; 
+  for (int j = 2; j <=N; j++) {
+   f1[N-j] =  (f0[N-j] - u[N-j] * f1[N-j+1])/d[N-j] ; 
+  }
+  
 
   delete[] d;
   delete[] u;
